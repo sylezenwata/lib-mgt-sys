@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// gender types
+enum genderTypes {
+  Male
+  Female
+}
+
+// admin model
+model staff {
+  id          Int         @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  otherNames  String?
+  email       String      @unique
+  password    String      @db.VarChar(1000)
+  gender      genderTypes
+  rank        String      @default("librarian")
+  blacklisted Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  tokens      token[]
+  patrons     patron[]
+  records     record[]
+  borrowAuths borrow[]
+}
+
+// token types
+enum tokenTypes {
+  login_session
+  email_verification
+  password_reset
+}
+
+// session token model
+model token {
+  id          Int        @id @default(autoincrement())
+  token       String
+  type        tokenTypes
+  owner       staff      @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  reqIp       String?
+  expiresAt   DateTime
+  blacklisted Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// patron types
+enum patronTypes {
+  kid
+  teen
+  young_adult
+  adult
+}
+
+// profession types
+enum professionTypes {
+  student
+  teacher
+  trader
+  entrepreneur
+  civil_servant
+  other
+}
+
+// id types
+enum idTypes {
+  NIMC
+  voters_card
+  other
+}
+
+// patron model
+model patron {
+  id          Int             @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  otherNames  String?
+  email       String?         @unique
+  phone       String          @unique
+  dateOfBirth DateTime
+  gender      genderTypes
+  address     String          @db.Text
+  type        patronTypes
+  profession  professionTypes
+  idType      idTypes
+  idNumber    String
+  createdBy   staff           @relation(fields: [createdById], references: [id])
+  createdById Int
+  borrowLimit Int             @default(5)
+  blacklisted Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  borrows     borrow[]
+}
+
+// record model
+model record {
+  id            Int      @id @default(autoincrement())
+  isbn          String   @unique
+  title         String
+  author        String
+  edition       String
+  publishedYear String
+  category      String
+  quantity      Int
+  createdBy     staff    @relation(fields: [createdById], references: [id])
+  createdById   Int
+  price         String   @default("0")
+  blacklisted   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  borrows       borrow[]
+}
+
+// borrow model
+model borrow {
+  id             Int      @id @default(autoincrement())
+  resource       record   @relation(fields: [resourceId], references: [id])
+  resourceId     Int
+  borrower       patron   @relation(fields: [borrowerId], references: [id])
+  borrowerId     Int
+  returned       Boolean  @default(false)
+  authorizedBy   staff    @relation(fields: [authorizedById], references: [id])
+  authorizedById Int
+  blacklisted    Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  returnAt       DateTime
+  isDue          Boolean  @default(false)
+}

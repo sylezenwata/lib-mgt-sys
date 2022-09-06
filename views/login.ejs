@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=data.head.title%></title>
+    <link rel="stylesheet" href="./styles/base.css">
+    <link rel="stylesheet" href="./styles/form.css">
+    <link rel="stylesheet" href="./styles/sub/login.css">
+</head>
+
+<body>
+    <div class="content flex">
+        <div class="main-panel p-tb-20 flex flex-col justify-c doc-width">
+            <form action="/admin/login" method="post" class="m-b-20">
+                <div class="form b-s-low">
+                    <div class="form-header flex flex-col align-c">
+                        <h1 class="text-c" style="font-size: 22px; line-height: 1;"><%=data.appName%></h1>
+                        <h2 class="text-c m-t-20" style="font-size: 18px;">Admin</h2>
+                    </div>
+                    <div class="form-body" data-form-body>
+                        <div class="input-wrap">
+                            <div class="form-input__wrap">
+                                <label class="form-input__label">
+                                    <span>Email</span>
+                                    <input type="email" class="form-input" name="email" placeholder="Enter email"
+                                        required />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="input-wrap">
+                            <div class="form-input__wrap">
+                                <label class="form-input__label">
+                                    <span>Password</span>
+                                    <input type="password" class="form-input" name="password"
+                                        placeholder="Enter password" required />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex justify-e m-t-10 position-r">
+                            <a href="javascript:void(0);" onclick="alert('Contact admin for account recovery.')">Forgot
+                                Password?</a>
+                        </div>
+                        <div class="btn-wrap">
+                            <button type="submit" class="btn primary w-100">
+                                Log In
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="module" src="/scripts/sub/login.js"></script>
+</body>
+
+</html>

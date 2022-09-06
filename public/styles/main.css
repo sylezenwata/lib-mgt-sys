@@ -1,0 +1,63 @@
+.main {
+	min-height: calc(100vh - 60px - 35px);
+}
+
+.footer {
+	padding: 10px 20px;
+	border-top: 1px solid var(--border-color);
+	background-color: var(--light-bg-color);
+}
+
+.nav {
+	border-bottom: 1px solid var(--border-color);
+	background-color: var(--light-bg-color);
+}
+
+.nav__content {
+	height: 60px;
+}
+
+.nav .icon svg {
+	stroke-width: 2;
+}
+
+.nav a.icon.stroke svg {
+	stroke: var(--sec-color-scheme);
+}
+
+.nav .--title {
+	font-weight: 600;
+	font-size: 18px;
+	margin-left: 20px;
+}
+.main__content {
+	background-color: var(--light-bg-color);
+}
+
+.search-form-wrap {
+	min-width: 225px;
+	max-width: 325px;
+	width: calc(100% / 2);
+}
+
+.input-wrap:not([data-error="true"]):focus-within .form-input,
+.input-wrap[data-content="true"] .form-input {
+	border-width: 1px;
+}
+
+.table-striped .table tbody tr:nth-of-type(odd) {
+	background-color: var(--bg-color);
+}
+
+.modal .form-body {
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.input-wrap {
+    margin-top: 15px;
+}
+
+.not-searchable {
+	text-decoration: underline;
+}

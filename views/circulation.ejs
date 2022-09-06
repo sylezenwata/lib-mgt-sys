@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('./partials/head.ejs')%>
+    <style>
+        td[data-due=true] {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <%-include('./partials/nav.ejs')%>
+        <div class="main p-lr-10 p-tb-10 doc-width">
+            <div class="main__content p-tb-10">
+                <div class="flex justify-b align-c flex-wrap p-lr-10 m-b-10">
+                    <a class="btn secondary bordered" href="/admin/catalogue"
+                        style="padding: 7px 10px; border-radius: 4px; text-transform: unset;">Go to Catalogue</a>
+                    <div class="search-form-wrap">
+                        <form action="/admin/circulation" method="GET" class="flex align-c">
+                            <div class="input-wrap" style="margin: 0;">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <input type="search" class="form-input" name="filter"
+                                            title="Perform advanced search using [column]=[value] pair"
+                                            placeholder="Search using [column]=[value] pair" value="<%=data.filter%>"
+                                            style="height: unset; padding: 10px 15px; border-radius: 35px; font-size: 14px;"
+                                            required>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn primary icon stroke-light m-l-10"
+                                style="padding: 4px; width: 40px; height: 35px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="10" cy="10" r="7"></circle>
+                                    <line x1="21" y1="21" x2="15" y2="15"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="p-lr-10">
+                    <div class="table-wrap table-striped table-responsive custom-scroll" style="margin-top: 0;">
+                        <table class="table" style="font-size: 12px;" data-table-borrows>
+                            <thead>
+                                <tr>
+                                    <th class="not-searchable">S/N</th>
+                                    <th class="not-searchable">isbn</th>
+                                    <th class="not-searchable">Title</th>
+                                    <th class="not-searchable">Borrower</th>
+                                    <th class="not-searchable">Authorized-By</th>
+                                    <th>Created-At</th>
+                                    <th>Return-At</th>
+                                    <th>Is-Due</th>
+                                    <th>Returned</th>
+                                    <th>Confirm Return</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    for (let i = 0; i < data.borrows.length; i++) {
+                                %>
+                                <tr data-item-id="<%=data.borrows[i].id%>">
+                                    <td><%=i+1%></td>
+                                    <td><%=data.borrows[i].resource.isbn%></td>
+                                    <td><%=data.borrows[i].resource.title%></td>
+                                    <td><%=data.borrows[i].borrower.email%></td>
+                                    <td><%=data.borrows[i].authorizedBy.email%></td>
+                                    <td><%=data.formatDate(data.borrows[i].createdAt)%></td>
+                                    <td><%=data.formatDate(data.borrows[i].returnAt)%></td>
+                                    <td data-due="<%=(data.borrows[i].isDue === true && data.borrows[i].returned === false)%>"><%=data.borrows[i].isDue%></td>
+                                    <td><%=data.borrows[i].returned%></td>
+                                    <td>
+                                        <button data-confirm-return type="button" class="btn warning"
+                                            style="padding: 4px 10px; font-size: 12px;"
+                                            <%=(data.borrows[i].returned === true ? "disabled" : "")%>>
+                                            Confirm
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% if (data.resource?.length > 0) { %>
+        <div data-modal="checkOutResource" class="modal overlay-dark" style="display: block;">
+            <div class="modal-content" data-modal-content>
+                <div class="modal-head">
+                    <div class="title p-10 text-cap">Check out (loan) resource</div>
+                    <button data-toggle-modal="checkOutResource" type="button" class="icon stroke close" title="Close"
+                        style="width: 25px; height: 25px; background-color: transparent; border: none">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="stroke-width: 2.0;" width="32" height="32"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body p-lr-20 p-tb-10">
+                    <form id="checkOutResourceForm" action="/admin/circulation/checkOut" method="POST">
+                        <div class="form-body" data-form-body>
+                            <input type="hidden" name="resourceId" value="<%=data.resource[0].id%>" required>
+                            <div class="input-wrap">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <span>Title</span>
+                                        <input type="text" class="form-input" placeholder="Enter book title"
+                                            value="<%=data.resource[0].title%>" readonly />
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>ISBN</span>
+                                            <input type="text" class="form-input" placeholder="Enter book isbn"
+                                                value="<%=data.resource[0].isbn%>" readonly />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Author</span>
+                                            <input type="text" class="form-input" placeholder="Enter book author"
+                                                value="<%=data.resource[0].author%>" readonly />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Price</span>
+                                            <input type="text" class="form-input" placeholder="Enter book price"
+                                                value="<%=data.resource[0].price%>" readonly />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Patron (borrower)</span>
+                                            <input type="text" class="form-input" name="borrower"
+                                                placeholder="Enter patron email" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Return-At</span>
+                                            <input type="datetime-local" name="returnAt" class="form-input"
+                                                placeholder="Choose returning date" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-wrap">
+                                <button type="submit" class="btn primary">Authorize</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% } %>
+        <%-include('./partials/footer.ejs')%>
+    </div>
+    <script type="module" src="/scripts/sub/circulation.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+<div class="nav">
+    <div class="nav__content flex align-c justify-b p-tb-10 p-lr-20 doc-width">
+        <div class="flex align-c">
+            <a title="Go back" href="<%=data.returnUrl%>" class="d-inline icon stroke">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <line x1="5" y1="12" x2="9" y2="16" />
+                    <line x1="5" y1="12" x2="9" y2="8" />
+                </svg>
+            </a>
+            <p class="--title"><%=data.nav.title%></p>
+        </div>
+        <a class="btn secondary bordered" href="/admin/logout" style="padding: 7px 10px; border-radius: 4px;">Log
+            out</a>
+    </div>
+</div>

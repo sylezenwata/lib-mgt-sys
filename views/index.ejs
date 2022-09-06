@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('./partials/head.ejs')%>
+    <style>
+        .search-form-wrap {
+            min-width: 225px;
+            max-width: 435px;
+            width: calc(100% / 2);
+        }
+
+        [data-has-records=false] {
+            display: none;
+        }
+
+        .content {
+            position: relative;
+        }
+
+        .--overlay {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: -1;
+        }
+
+        .--overlay::before {
+            position: absolute;
+            content: "";
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            -webkit-backdrop-filter: blur(3px);
+            backdrop-filter: blur(3px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <div class="--overlay" style="background: url(/images/bg_img.jpeg) no-repeat center; background-size: cover;"></div>
+        <div class="nav">
+            <div class="nav__content flex align-c justify-b p-tb-10 p-lr-20 doc-width">
+                <p class="--title" style="margin-left: 0;"><%=data.nav.title%></p>
+            </div>
+        </div>
+        <div class="main p-lr-20 p-tb-10 doc-width">
+            <div class="main__content p-tb-10">
+                <div class="flex justify-c flex-wrap p-tb-20 p-lr-10 m-b-10">
+                    <div class="search-form-wrap">
+                        <p class="text-c">Search ISBN, author, title, category or published year</p>
+                        <form action="/" method="GET" class="flex align-c">
+                            <div class="input-wrap" style="margin-top: 20px;">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <input type="search" class="form-input text-c" name="search"
+                                            title="Search ISBN, author, title, category or published year"
+                                            placeholder="Enter search value" value="<%=data.search%>"
+                                            style="height: unset; padding: 10px 15px; border-radius: 35px; font-size: 14px;"
+                                            required>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn primary icon stroke-light m-l-10"
+                                style="padding: 4px 20px; width: auto; height: 35px; margin-top: 20px;">
+                                search
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="p-lr-10">
+                    <% if (data.records.length <= 0 && data.search?.length > 0) {%>
+                    <div class="text-c f-16" style="padding-bottom: 20px;">
+                        <p style="font-size: 20px;">Oops!</p>
+                        <p class="m-t-5">Search value did not yield any result</p>
+                    </div>
+                    <% } %>
+                    <div class="table-wrap table-striped table-responsive custom-scroll" style="margin-top: 0;"
+                        data-has-records="<%=(data.records.length > 0)%>">
+                        <table class="table" style="font-size: 12px;" data-table-records>
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>isbn</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Edition</th>
+                                    <th>Published-Year</th>
+                                    <th>Category</th>
+                                    <th>Price (NGN)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    for (let i = 0; i < data.records.length; i++) {
+                                        const isAvailable = data.records[i].quantity > data.records[i].borrows.length;
+                                        const available = isAvailable ? "Available" : "Not available";
+                                %>
+                                <tr data-item-id="<%=data.records[i].id%>">
+                                    <td><%=i+1%></td>
+                                    <td><%=data.records[i].isbn%></td>
+                                    <td><%=data.records[i].title%></td>
+                                    <td><%=data.records[i].author%></td>
+                                    <td><%=data.records[i].edition%></td>
+                                    <td><%=data.records[i].publishedYear%></td>
+                                    <td><%=data.records[i].category%></td>
+                                    <td><%=data.records[i].price%></td>
+                                    <td><%=available%></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%-include('./partials/footer.ejs')%>
+    </div>
+</body>
+
+</html>

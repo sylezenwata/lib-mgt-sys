@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('./partials/head.ejs')%>
+    <link rel="stylesheet" href="/styles/sub/home.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="flex align-c justify-b p-tb-20 p-lr-20 doc-width">
+            <h1>Welcome <%=data.user.firstName%>,</h1>
+            <a class="btn secondary bordered" href="/admin/logout" style="padding: 7px 10px; border-radius: 4px;">Log
+                out</a>
+        </div>
+        <div class="main doc-width">
+            <div class="--units flex flex-flow p-10">
+                <div class="box-hol">
+                    <a href="/admin/circulation" class="box">
+                        <h2 class="m-b-10">Circulation Unit</h2>
+                        <p class="text-mute">Process check out (loan resource), and return of library
+                            materials/resources</p>
+                    </a>
+                </div>
+                <div class="box-hol">
+                    <a href="/admin/acquisition" class="box">
+                        <h2 class="m-b-10">Acquisition Unit</h2>
+                        <p class="text-mute">Manage and add new materials/resources</p>
+                    </a>
+                </div>
+                <div class="box-hol">
+                    <a href="/admin/catalogue" class="box">
+                        <h2 class="m-b-10">Catalogue Unit</h2>
+                        <p class="text-mute">Find, identify, and select materials/resources</p>
+                    </a>
+                </div>
+                <div class="box-hol">
+                    <a href="/admin/stacks" class="box">
+                        <h2 class="m-b-10">Stack Unit</h2>
+                        <p class="text-mute">Find and identify materials/resouces on loan</p>
+                    </a>
+                </div>
+                <div class="box-hol">
+                    <a href="/admin/staffs" class="box">
+                        <h2 class="m-b-10">Staffs</h2>
+                        <p class="text-mute">Manage staffs (register, ban, view and update credentials, e.t.c.)</p>
+                    </a>
+                </div>
+                <div class="box-hol">
+                    <a href="/admin/patrons" class="box">
+                        <h2 class="m-b-10">Patrons</h2>
+                        <p class="text-mute">Manage patrons (register, ban, view and update credentials, e.t.c.)</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <%-include('./partials/footer.ejs')%>
+    </div>
+</body>
+
+</html>

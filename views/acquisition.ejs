@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('./partials/head.ejs')%>
+</head>
+
+<body>
+    <div class="content">
+        <%-include('./partials/nav.ejs')%>
+        <div class="main p-lr-10 p-tb-10 doc-width">
+            <div class="main__content p-tb-10">
+                <div class="flex justify-b flex-wrap p-lr-10 m-b-10">
+                    <button data-toggle-modal="createRecord" class="btn primary bordered flex align-c"
+                        style="padding: 5px 20px; border-radius: 20px;">
+                        <span class="icon stroke">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                        <span class="m-l-5">Add Record</span>
+                    </button>
+                    <div class="search-form-wrap">
+                        <form action="/admin/acquisition" method="GET" class="flex align-c">
+                            <div class="input-wrap" style="margin: 0;">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <input type="search" class="form-input" name="filter"
+                                            title="Perform advanced search using [column]=[value] pair"
+                                            placeholder="Search using [column]=[value] pair" value="<%=data.filter%>"
+                                            style="height: unset; padding: 10px 15px; border-radius: 35px; font-size: 14px;"
+                                            required>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn primary icon stroke-light m-l-10"
+                                style="padding: 4px; width: 40px; height: 35px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="10" cy="10" r="7"></circle>
+                                    <line x1="21" y1="21" x2="15" y2="15"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="p-lr-10">
+                    <div class="table-wrap table-striped table-responsive custom-scroll" style="margin-top: 0;">
+                        <table class="table" style="font-size: 12px;" data-table-records>
+                            <thead>
+                                <tr>
+                                    <th class="not-searchable">S/N</th>
+                                    <th>isbn</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Edition</th>
+                                    <th>Published-Year</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Price (NGN)</th>
+                                    <th class="not-searchable">Created-By</th>
+                                    <th class="not-searchable">Borrows</th>
+                                    <th>Blacklisted</th>
+                                    <th>Created-At</th>
+                                    <th class="not-searchable">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    for (let i = 0; i < data.records.length; i++) {
+                                        const banColor = data.records[i].blacklisted === true ? "warning" : "error";
+                                        const banTxt = data.records[i].blacklisted === true ? "Unban" : "ban";
+                                        const banAction = data.records[i].blacklisted === true ? "false" : "true"
+                                %>
+                                <tr data-item-id="<%=data.records[i].id%>">
+                                    <td><%=i+1%></td>
+                                    <td><%=data.records[i].isbn%></td>
+                                    <td><%=data.records[i].title%></td>
+                                    <td><%=data.records[i].author%></td>
+                                    <td><%=data.records[i].edition%></td>
+                                    <td><%=data.records[i].publishedYear%></td>
+                                    <td><%=data.records[i].category%></td>
+                                    <td><%=data.records[i].quantity%></td>
+                                    <td><%=data.records[i].price%></td>
+                                    <td><%=data.records[i].createdBy.email%></td>
+                                    <td><%=data.records[i].borrows.length%></td>
+                                    <td><%=data.records[i].blacklisted%></td>
+                                    <td><%=data.formatDate(data.records[i].createdAt)%></td>
+                                    <td>
+                                        <button data-record-ban="<%=banAction%>" type="button" class="btn <%=banColor%>"
+                                            style="padding: 4px 10px; font-size: 12px;">
+                                            <%=banTxt%>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-modal="createRecord" class="modal overlay-dark">
+            <div class="modal-content" data-modal-content>
+                <div class="modal-head">
+                    <div class="title p-10">Add Record</div>
+                    <button data-toggle-modal="createRecord" type="button" 
+                        class="icon stroke close" title="Close"
+                        style="width: 25px; height: 25px; background-color: transparent; border: none">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="stroke-width: 2.0;" width="32" height="32"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body p-lr-20 p-tb-10">
+                    <form id="createRecordForm" action="/admin/acquisition/create" method="POST">
+                        <div class="form-body" data-form-body>
+                            <div class="input-wrap">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <span>Title</span>
+                                        <input type="text" class="form-input" name="title"
+                                            placeholder="Enter book title" required />
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>ISBN</span>
+                                            <input type="text" class="form-input" name="isbn"
+                                                placeholder="Enter book isbn" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Author</span>
+                                            <input type="text" class="form-input" name="author"
+                                                placeholder="Enter book author" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Edition</span>
+                                            <input type="text" class="form-input" name="edition"
+                                                placeholder="Enter book edition" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Published year</span>
+                                            <input type="text" class="form-input" name="publishedYear"
+                                                placeholder="Enter published year" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Category</span>
+                                            <input type="text" class="form-input" name="category"
+                                                placeholder="Enter book category" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Quantity</span>
+                                            <input type="number" class="form-input" name="quantity"
+                                                placeholder="Enter quantity" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Price (NGN)</span>
+                                            <input type="text" class="form-input" name="price"
+                                                placeholder="Enter book price" value="0" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-wrap">
+                                <button type="submit" class="btn primary">Create</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%-include('./partials/footer.ejs')%>
+    </div>
+    <script type="module" src="/scripts/sub/acquisition.js"></script>
+</body>
+
+</html>

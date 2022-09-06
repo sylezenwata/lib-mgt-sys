@@ -1,0 +1,42 @@
+.--units {
+	--units-counts: 4;
+	max-width: calc(((100% / var(--units-counts)) * var(--units-counts)) + 20px);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.box-hol {
+	width: calc(100% / var(--units-counts));
+}
+
+.box {
+	padding: 20px;
+	border-radius: 4px;
+	min-height: 170px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+}
+
+.box:hover {
+	box-shadow: var(--main-bx-s);
+	top: -5px;
+}
+
+a.box {
+	color: unset;
+	text-transform: unset;
+}
+
+@media (max-width: 905px) {
+	.--units {
+		--units-counts: 3;
+	}
+}
+
+@media (max-width: 725px) {
+	.--units {
+		--units-counts: 2;
+	}
+}

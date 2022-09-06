@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('./partials/head.ejs')%>
+</head>
+
+<body>
+    <div class="content">
+        <%-include('./partials/nav.ejs')%>
+        <div class="main p-lr-10 p-tb-10 doc-width">
+            <div class="main__content p-tb-10">
+                <div class="flex justify-b flex-wrap p-lr-10 m-b-10">
+                    <button data-toggle-modal="createPatron" class="btn primary bordered flex align-c"
+                        style="padding: 5px 20px; border-radius: 20px;">
+                        <span class="icon stroke">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </span>
+                        <span class="m-l-5">Add Patron</span>
+                    </button>
+                    <div class="search-form-wrap">
+                        <form action="/admin/patrons" method="GET" class="flex align-c">
+                            <div class="input-wrap" style="margin: 0;">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <input type="search" class="form-input" name="filter"
+                                            title="Perform advanced search using [column]=[value] pair"
+                                            placeholder="Search using [column]=[value] pair" value="<%=data.filter%>"
+                                            style="height: unset; padding: 10px 15px; border-radius: 35px; font-size: 14px;"
+                                            required>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn primary icon stroke-light m-l-10"
+                                style="padding: 4px; width: 40px; height: 35px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="#000000" fill="none" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="10" cy="10" r="7"></circle>
+                                    <line x1="21" y1="21" x2="15" y2="15"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="p-lr-10">
+                    <div class="table-wrap table-striped table-responsive custom-scroll" style="margin-top: 0;">
+                        <table class="table" style="font-size: 12px;" data-table-patrons>
+                            <thead>
+                                <tr>
+                                    <th class="not-searchable">S/N</th>
+                                    <th>First-Name</th>
+                                    <th>Last-Name</th>
+                                    <th>Other-Names</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Date-Of-Birth</th>
+                                    <th>Gender</th>
+                                    <th>Address</th>
+                                    <th>Type</th>
+                                    <th>Profession</th>
+                                    <th>Id-Type</th>
+                                    <th>Id-Number</th>
+                                    <th>Borrow-Limit</th>
+                                    <th class="not-searchable">Created-By</th>
+                                    <th>Blacklisted</th>
+                                    <th>Created-At</th>
+                                    <th class="not-searchable">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    for (let i = 0; i < data.patrons.length; i++) {
+                                        const banColor = data.patrons[i].blacklisted === true ? "warning" : "error";
+                                        const banTxt = data.patrons[i].blacklisted === true ? "Unban" : "ban";
+                                        const banAction = data.patrons[i].blacklisted === true ? "false" : "true"
+                                %>
+                                <tr data-item-id="<%=data.patrons[i].id%>">
+                                    <td><%=i+1%></td>
+                                    <td><%=data.patrons[i].firstName%></td>
+                                    <td><%=data.patrons[i].lastName%></td>
+                                    <td><%=data.patrons[i].otherNames%></td>
+                                    <td><%=data.patrons[i].email%></td>
+                                    <td><%=data.patrons[i].phone%></td>
+                                    <td><%=data.formatDate(data.patrons[i].dateOfBirth)%></td>
+                                    <td><%=data.patrons[i].gender%></td>
+                                    <td><%=data.patrons[i].address%></td>
+                                    <td><%=data.patrons[i].type%></td>
+                                    <td><%=data.patrons[i].profession%></td>
+                                    <td><%=data.patrons[i].idType%></td>
+                                    <td><%=data.patrons[i].idNumber%></td>
+                                    <td><%=data.patrons[i].borrowLimit%></td>
+                                    <td><%=data.patrons[i].createdBy.email%></td>
+                                    <td><%=data.patrons[i].blacklisted%></td>
+                                    <td><%=data.formatDate(data.patrons[i].createdAt)%></td>
+                                    <td>
+                                        <button data-patron-ban="<%=banAction%>" type="button" class="btn <%=banColor%>"
+                                            style="padding: 4px 10px; font-size: 12px;">
+                                            <%=banTxt%>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-modal="createPatron" class="modal overlay-dark">
+            <div class="modal-content" data-modal-content>
+                <div class="modal-head">
+                    <div class="title p-10">Add Patron</div>
+                    <button data-toggle-modal="createPatron" type="button" 
+                        class="icon stroke close" title="Close"
+                        style="width: 25px; height: 25px; background-color: transparent; border: none">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="stroke-width: 2.0;" width="32" height="32"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body p-lr-20 p-tb-10">
+                    <form id="createPatronForm" action="/admin/patrons/create" method="POST">
+                        <div class="form-body" data-form-body>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>First name</span>
+                                            <input type="text" class="form-input" name="firstName"
+                                                placeholder="Enter first name" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Last name</span>
+                                            <input type="text" class="form-input" name="lastName"
+                                                placeholder="Enter last name" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Other names</span>
+                                            <input type="text" class="form-input" name="otherNames"
+                                                placeholder="Enter other names" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Email</span>
+                                            <input type="email" class="form-input" name="email"
+                                                placeholder="Enter email address" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Phone</span>
+                                            <input type="text" class="form-input" name="phone"
+                                                placeholder="Enter phone" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Date-Of-Birth</span>
+                                            <input type="date" class="form-input" name="dateOfBirth"
+                                                placeholder="Enter date of birth" required />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Gender</span>
+                                            <select class="form-input" name="gender" required>
+                                                <option value="">Select gender</option>
+                                                <option>Female</option>
+                                                <option>Male</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Type</span>
+                                            <select class="form-input" name="type" required>
+                                                <option value="">Select type</option>
+                                                <option>kid</option>
+                                                <option>teen</option>
+                                                <option>young_adult</option>
+                                                <option>adult</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Profession</span>
+                                            <select class="form-input" name="profession" required>
+                                                <option value="">Select profession</option>
+                                                <option>student</option>
+                                                <option>teacher</option>
+                                                <option>trader</option>
+                                                <option>entrepreneur</option>
+                                                <option>civil_servant</option>
+                                                <option>other</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group-wrap">
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Id-Type</span>
+                                            <select class="form-input" name="idType" required>
+                                                <option value="">Select id type</option>
+                                                <option>NIMC</option>
+                                                <option>voters_card</option>
+                                                <option>other</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="input-wrap">
+                                    <div class="form-input__wrap">
+                                        <label class="form-input__label">
+                                            <span>Id-Number</span>
+                                            <input type="text" class="form-input" name="idNumber"
+                                                placeholder="Enter id number" required />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-wrap">
+                                <div class="form-input__wrap">
+                                    <label class="form-input__label">
+                                        <span>Address</span>
+                                        <textarea class="form-input" name="address" cols="30" rows="10" placeholder="Enter patron address" required></textarea>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="btn-wrap">
+                                <button type="submit" class="btn primary">Create</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%-include('./partials/footer.ejs')%>
+    </div>
+    <script type="module" src="/scripts/sub/patrons.js"></script>
+</body>
+
+</html>
